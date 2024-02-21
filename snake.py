@@ -139,9 +139,9 @@ def check_collisions(snake):
         return True
 
     #self-interaction
- #   for body_part in snake.coordinates[1:]:
- #       if x==body_part[0] and y==body_part[1]:
- #           return True
+    for body_part in snake.coordinates[1:]:
+        if x==body_part[0] and y==body_part[1]:
+            return True
 
     return False
 
@@ -152,24 +152,50 @@ def game_over():
     canvas.delete(ALL)
     canvas.create_text(canvas.winfo_width()/2,canvas.winfo_height()/2,font=('consolas',70),text="GAME OVER",fill="red",tag="gameover")
 
-#thats the end of function definitions
 #########################
 
+def Restart():
 
-#main tk function
+    #place holder
+    canvas.delete(ALL)
+    canvas.create_text(canvas.winfo_width()/2,canvas.winfo_height()/2,font=('consolas',70),text="Restart",fill="red",tag="gameover")
 
-window = Tk()
-window.title('Tk Snake(python)')
+def EasyMode():
 
+    #place holder
+    canvas.delete(ALL)
+    canvas.create_text(canvas.winfo_width()/2,canvas.winfo_height()/2,font=('consolas',70),text="EasyMode",fill="red",tag="gameover")
+
+
+def HardMode():
+
+    #place holder
+    canvas.delete(ALL)
+    canvas.create_text(canvas.winfo_width()/2,canvas.winfo_height()/2,font=('consolas',70),text="EasyMode",fill="red",tag="gameover")
+
+
+
+
+###########################
+#thats the end of function definitions
+##############
+
+
+
+#   global score
 score = 0
+#   global direction
 direction='down'
+window = Tk()
+
+
+window.title('Tk Snake(python)')
 
 label = Label(window, text="Points: {}".format(score),font=('consolas,20'))
 label.pack()
 
 canvas = Canvas(window, bg=BACKGROUND_COLOR, height=HEIGHT, width=WIDTH)
 canvas.pack()
-
 window.update()
 window_width = window.winfo_width()
 window_height = window.winfo_height()
@@ -178,19 +204,27 @@ screen_height = window.winfo_screenheight()
 
 x = int((screen_width/2)-(window_width/2))
 y = int((screen_height/2)-(window_height/2))
-
 window.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
+
+#COMMANDS
 window.bind('<Left>',lambda event: change_direction('left'))
 window.bind('<Right>',lambda event: change_direction('right'))
 window.bind('<Up>',lambda event: change_direction('up'))
 window.bind('<Down>',lambda event: change_direction('down'))
-
 #restart
-#window.bind('<Return>',lambda event: restart)
+window.bind('<R>',lambda event: Restart())
+#Other Modes
+window.bind('<E>',lambda event: EasyMode())
+window.bind('<H>',lambda event: HardMode())
 
+######
 snake = Snake()
 food = Food()
 
 next_turn(snake,food)
 
+
+
+####
 window.mainloop()
