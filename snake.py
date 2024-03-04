@@ -60,6 +60,8 @@ class SnakeGame(tk.Tk):
     def doubleSpeed(self):
         global speed
         speed = int(speed/2)
+        if speed <= 0.0:
+            speed = 1
         print('speed = {}'.format(speed))
 
     def toggle_infinite_mode(self):
