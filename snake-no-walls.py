@@ -19,15 +19,16 @@ direction = 'down'
 score = 0
 speed = 75
 
-#globals
+#add start menu showing commands
 
-infinteMode = False
+#add infinite as toggle mode
+
+#infinite mood should leave food behind (changed color, no longer an obstacle)
 
 class SnakeGame(tk.Tk):
     def __init__(self):
         super().__init__()
         self.paused = False
-
         self.title('Snake')
         self.score_label = tk.Label(self, text="Points: {}".format(score), font=('consolas', 20))
         self.score_label.pack()
@@ -39,7 +40,6 @@ class SnakeGame(tk.Tk):
         self.bind('<R>', lambda event: self.restart())
         self.bind('<Q>', lambda event: sys.exit())
         self.bind('<P>', lambda event: self.toggle_pause())
-        self.bind('<I>', lambda event: self.toggle_infinite_mode())
         self.bind('1', lambda event: self.halfSpeed())
         self.bind('2', lambda event: self.doubleSpeed())
 
@@ -60,24 +60,14 @@ class SnakeGame(tk.Tk):
     def doubleSpeed(self):
         global speed
         speed = int(speed/2)
+        if speed <= 0.0:
+            speed = 1
         print('speed = {}'.format(speed))
-
-    def toggle_infinite_mode(self):
-        global infinteMode
-        global SNAKE_COLOR
-        if infinteMode:
-            infinteMode = False
-            SNAKE_COLOR = '#00FF00'
-        else:
-            infinteMode = True
-            SNAKE_COLOR = '#551A8B'
-            print('No Walls!')
 
     def toggle_pause(self):
         self.paused = not self.paused  # Toggle pause status
         if self.paused:
-            self.canvas.create_text(WIDTH/2, (HEIGHT/2), font=('consolas', 40), text="PAUSED", fill="white", tag="paused")
-            self.canvas.create_text(WIDTH/2, (HEIGHT/4), font=('consolas', 20), text=" [P]: Pause \t [Q]: Quit \n  \n [R]: Restart \t [I]: Infinite Mode \n \n [1]: Slow down  [2]: Speed up ", fill="white", tag="paused")
+            self.canvas.create_text(WIDTH / 2, HEIGHT / 2, font=('consolas', 40), text="PAUSED", fill="white", tag="paused")
         else:
             self.canvas.delete("paused")
             self.next_turn()  # Resume the game if it was paused
@@ -122,14 +112,7 @@ class SnakeGame(tk.Tk):
                 direction = new_direction
 
     def check_collisions(self):
-        global infinteMode
         x, y = self.snake.coordinates[0]
-        if not infinteMode:
-            if x < 0 or x >= WIDTH:
-                return True
-            elif y < 0 or y >= HEIGHT:
-                return True
-
         for body_part in self.snake.coordinates[1:]:
             if x == body_part[0] and y == body_part[1]:
                 return True
@@ -157,21 +140,19 @@ class Snake:
             self.squares.append(square)
 
     def move_snake(self, x, y):
-        global infinteMode
-        if infinteMode:
-            if x < 0:
-                x = WIDTH - SPACE_SIZE
-            elif x > WIDTH:
-                x = 0 #+ (x - WIDTH)
-            elif y < 0:
-                y = HEIGHT - SPACE_SIZE
-            elif y > HEIGHT:
-                y = 0 #+ (y - HEIGHT)
 
+    #    x, y = self.coordinates[0]
+        if x < 0:
+            x = WIDTH - SPACE_SIZE
+        elif x > WIDTH:
+            x = 0 #+ (x - WIDTH)
+        elif y < 0:
+            y = HEIGHT - SPACE_SIZE
+        elif y > HEIGHT:
+            y = 0 #+ (y - HEIGHT)
 
         self.coordinates.insert(0, (x, y))
         self.squares.insert(0, self.canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOR))
-
 
     def remove_tail(self):
         self.canvas.delete(self.squares[-1])
