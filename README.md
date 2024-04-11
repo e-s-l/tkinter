@@ -1,6 +1,4 @@
-Just a toy to get more familiarity with python tkinter for an up-coming work project
-Based of a website (geekforgeek or something) example. 
-Modified to use classes. 
-Works but still would like to make some changes,
-e.g. main/pause menu (w key options), 'infinite' (no walls) version....
+Just a toy to get more familiarity with python tkinter for an up-coming work project.
+Based of a website (geekforgeek I think it was) example. 
+Modified to use classes, main/pause menu (w key options), 'infinite' (no walls) version....
 Not great, but basically, considering, current snake.py as finished....
