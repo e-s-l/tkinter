@@ -4,11 +4,8 @@
 # GUI Interface for the Watch Dog in TKinter
 
 # TO DO:
-# Error and exception handling
-# Focus
-# Actual valid button combs (on + exp + tl only or just on)
-# maybe need to be able to identify if already running?
-# make check box ticks larger
+# Better error and exception handling
+# Need to be able to identify if Watchdog already running?
 
 
 ##################
@@ -24,17 +21,24 @@ import subprocess
 class WatchDogFrame:
     def __init__(self, parent):
         print("Initialising WatchDog Frame")
-        # Main Frame
+        #
         self.parent = parent
         self.state_label = None
         self.button = None
         self.button_frame = None
-        self.on = False  # Watchdog State
-        self.state_label_text = "OFF"
+        self.state_label_text = None
+        self.on = None
+
+        self.get_watchdog_state()
 
         self.watchdog_frame = tk.Frame(parent, bg='light grey', bd=5)
         self.make_watchdog_button()
         self.watchdog_frame.pack(fill=tk.BOTH, expand=True)
+
+    def get_watchdog_state(self):
+
+        self.on = False  # Watchdog State
+        self.state_label_text = "OFF"
 
     def make_watchdog_button(self):
         ############
@@ -65,6 +69,7 @@ class WatchDogFrame:
                 self.state_label_text = "OFF"
                 self.parent.run_script('watchdog_off')
             self.load_text()
+            print(self.on)
         except Exception as e:
             self.parent.show_message(f"Error Toggling States: \n {e}")
 
@@ -118,7 +123,7 @@ class LogMonitorFrame:
         self.nn_state_var = tk.IntVar()
         self.ns_state_var = tk.IntVar()
         #
-        self.tele_frame = tk.LabelFrame(self.logmonitor_frame, bg='light grey', borderwidth=0, highlightthickness=0)  
+        self.tele_frame = tk.LabelFrame(self.logmonitor_frame, bg='light grey', borderwidth=0, highlightthickness=0)
         self.check_nn = tk.Checkbutton(self.tele_frame, text="NN", fg="#000080", font=(self.parent.font, 12, "bold"),
                                        selectcolor="#008080", relief=tk.RAISED, bd=3, variable=self.nn_state_var)
         self.check_ns = tk.Checkbutton(self.tele_frame, text="NS", fg="#000080", font=(self.parent.font, 12, "bold"),
@@ -132,11 +137,12 @@ class LogMonitorFrame:
     def run_log_script(self):
         self.parent.show_message("Log Monitor Not Yet Available.")
         try:
-            if self.parent.on and self.log_state_var.get() == 1 and not self.entry_var.get():
+            if self.parent.watchdog_frame.on and self.log_state_var.get() == 1 and not self.entry_var.get():
                 # Flash the entry box
                 self.entry.config(bg="#FFC0CB")  # pink
                 self.entry.after(250, self.reset_entry_bg)
-            elif self.parent.on and self.log_state_var.get() == 1 and not (self.nn_state_var or self.ns_state_var):
+            elif self.parent.watchdog_frame.on and self.log_state_var.get() == 1 and not (self.nn_state_var
+                                                                                          or self.ns_state_var):
                 self.parent.show_message("Error: Which Antenna?")
             else:
                 parameter = self.entry_var.get()
@@ -166,7 +172,7 @@ class Window(tk.Tk):
 
         try:
             self.watchdog_frame = WatchDogFrame(self)
-            self.logmonitor_frame = LogMonitorFrame(self)
+          # self.logmonitor_frame = LogMonitorFrame(self)
         except Exception as e:
             self.show_message(f"Error Starting GUI: \n {e}")
             self.destroy()
