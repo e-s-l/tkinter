@@ -118,7 +118,7 @@ class LogMonitorFrame:
         self.nn_state_var = tk.IntVar()
         self.ns_state_var = tk.IntVar()
         #
-        self.tele_frame = tk.LabelFrame(self.logmonitor_frame, bg='light grey', borderwidth=0, highlightthickness=0)  # , bd=4)
+        self.tele_frame = tk.LabelFrame(self.logmonitor_frame, bg='light grey', borderwidth=0, highlightthickness=0)  
         self.check_nn = tk.Checkbutton(self.tele_frame, text="NN", fg="#000080", font=(self.parent.font, 12, "bold"),
                                        selectcolor="#008080", relief=tk.RAISED, bd=3, variable=self.nn_state_var)
         self.check_ns = tk.Checkbutton(self.tele_frame, text="NS", fg="#000080", font=(self.parent.font, 12, "bold"),
@@ -140,7 +140,7 @@ class LogMonitorFrame:
                 self.parent.show_message("Error: Which Antenna?")
             else:
                 parameter = self.entry_var.get()
-                # run_script('./your_script.sh parameter')
+                # run_script('./script.sh parameter')
         except Exception as e:
             self.parent.show_message(f"Error Running Log Script: \n {e}")
 
@@ -164,11 +164,12 @@ class Window(tk.Tk):
         self.check_fonts()
         self.bind_all("<Button-1>", lambda event: event.widget.focus_set())
 
-        ###
-        self.watchdog_frame = WatchDogFrame(self)
-        ###
-        self.logmonitor_frame = LogMonitorFrame(self)
-        ###
+        try:
+            self.watchdog_frame = WatchDogFrame(self)
+            self.logmonitor_frame = LogMonitorFrame(self)
+        except Exception as e:
+            self.show_message(f"Error Starting GUI: \n {e}")
+            self.destroy()
 
     def show_message(self, message):
         self.popup = tk.messagebox.showerror(title="Error", message=message)
