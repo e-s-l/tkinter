@@ -72,6 +72,83 @@ class WatchDogFrame:
         self.state_label.config(text="Watch Dog is {}".format(self.state_label_text))
 
 
+class LogMonitorFrame:
+
+    def __init__(self, parent):
+        self.check_ns = None
+        self.check_nn = None
+        self.tele_frame = None
+        self.ns_state_var = None
+        self.nn_state_var = None
+        self.entry = None
+        self.entry_var = None
+        self.check_button = None
+        self.log_state_var = None
+        print("Initialising Log Monitor Frame")
+
+        self.parent = parent
+
+        # construct
+        self.logmonitor_frame = tk.LabelFrame(parent, bg='light grey', bd=5, text="Monitor Log",
+                                              font=(parent.font, 12, "bold"), highlightbackground="#6c6c6c")
+        # functions
+        self.make_lm_check_button()
+        self.make_lm_entry()
+        self.make_lm_tl_checks()
+        # pack
+        self.logmonitor_frame.pack(padx=20, pady=20)
+
+    def make_lm_check_button(self):
+        # CHECK BUTTON:
+        self.parent.log_state_var = tk.IntVar()
+        self.check_button = tk.Checkbutton(self.logmonitor_frame, text="Log Errors", fg="#000080",
+                                           font=(self.parent.font, 12, "bold"),
+                                           selectcolor="#008080", relief=tk.RAISED, command=self.run_log_script,
+                                           variable=self.log_state_var, bd=3)
+        self.check_button.flash()
+        self.check_button.pack(padx=20, pady=20, side=tk.LEFT, expand=True)
+
+    def make_lm_entry(self):
+        self.entry_var = tk.StringVar()
+        self.entry = tk.Entry(self.logmonitor_frame, textvariable=self.entry_var, bd=3)
+        self.entry.config(width=8)
+        self.entry.pack(padx=10, pady=10, side=tk.LEFT, expand=True)
+
+    def make_lm_tl_checks(self):
+        self.nn_state_var = tk.IntVar()
+        self.ns_state_var = tk.IntVar()
+        #
+        self.tele_frame = tk.LabelFrame(self.logmonitor_frame, bg='light grey', borderwidth=0, highlightthickness=0)  # , bd=4)
+        self.check_nn = tk.Checkbutton(self.tele_frame, text="NN", fg="#000080", font=(self.parent.font, 12, "bold"),
+                                       selectcolor="#008080", relief=tk.RAISED, bd=3, variable=self.nn_state_var)
+        self.check_ns = tk.Checkbutton(self.tele_frame, text="NS", fg="#000080", font=(self.parent.font, 12, "bold"),
+                                       selectcolor="#008080", relief=tk.RAISED, bd=3, variable=self.ns_state_var)
+        self.check_nn.pack(padx=10, pady=10, side=tk.TOP, expand=True)
+        self.check_ns.pack(padx=10, pady=10, side=tk.TOP, expand=True)
+        self.check_nn.flash()
+        self.check_ns.flash()
+        self.tele_frame.pack(padx=20, pady=20, side=tk.LEFT, expand=True)
+
+    def run_log_script(self):
+        self.parent.show_message("Log Monitor Not Yet Available.")
+        try:
+            if self.parent.on and self.log_state_var.get() == 1 and not self.entry_var.get():
+                # Flash the entry box
+                self.entry.config(bg="#FFC0CB")  # pink
+                self.entry.after(250, self.reset_entry_bg)
+            elif self.parent.on and self.log_state_var.get() == 1 and not (self.nn_state_var or self.ns_state_var):
+                self.parent.show_message("Error: Which Antenna?")
+            else:
+                parameter = self.entry_var.get()
+                # run_script('./your_script.sh parameter')
+        except Exception as e:
+            self.parent.show_message(f"Error Running Log Script: \n {e}")
+
+    def reset_entry_bg(self):
+        # Reset background color to white
+        self.entry.config(bg="white")
+
+
 class Window(tk.Tk):
     # the window that holds the component frames
     def __init__(self):
@@ -89,6 +166,8 @@ class Window(tk.Tk):
 
         ###
         self.watchdog_frame = WatchDogFrame(self)
+        ###
+        self.logmonitor_frame = LogMonitorFrame(self)
         ###
 
     def show_message(self, message):
