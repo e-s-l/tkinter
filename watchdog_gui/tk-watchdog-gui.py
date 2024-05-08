@@ -7,6 +7,7 @@
 # Better error and exception handling
 # Need to be able to identify if Watchdog already running?
 
+# grey: #C0C0C0 # teal: 008080 or #018281 # pink: #FFC0CB
 
 ##################
 
@@ -28,9 +29,8 @@ class WatchDogFrame:
         self.button_frame = None
         self.state_label_text = None
         self.on = None
-
+        #
         self.get_watchdog_state()
-
         self.watchdog_frame = tk.Frame(parent, bg='light grey', bd=5)
         self.make_watchdog_button()
         self.watchdog_frame.pack(fill=tk.BOTH, expand=True)
@@ -48,11 +48,12 @@ class WatchDogFrame:
         self.button_frame.pack(padx=20, pady=25, fill=tk.BOTH, expand=True)
         # BUTTON:
         self.button = tk.Button(self.button_frame, text="Turn On Watchdog", bg="#394dcd", fg="white",  # "#008080"
-                                font=(self.parent.font, 20, "bold"), command=self.toggle_state, bd=5, relief=tk.RAISED)
+                                font=(self.parent.font, 24, "bold"), command=self.toggle_state, bd=6, relief=tk.RAISED,
+                                activebackground="#008080")
         self.button.place(relx=0.5, rely=0.2, anchor=tk.CENTER)
         self.button.pack(padx=20, pady=40, fill=tk.BOTH, expand=True)
         # LABEL:
-        self.state_label = tk.Label(self.button_frame, font=(self.parent.font, 16), bg='light grey', fg="#000080", bd=5)
+        self.state_label = tk.Label(self.button_frame, font=(self.parent.font, 18), bg='light grey', fg="#000080", bd=5)
         self.state_label.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
         self.state_label.pack(padx=2, pady=4, fill=tk.BOTH, expand=True)
         self.load_text()
@@ -61,20 +62,20 @@ class WatchDogFrame:
         try:
             self.on = not self.on  # Toggle on/off
             if self.on:
-                self.button.config(bg="#e52e2e", text="Turn Off Watchdog", font=(self.parent.font, 20, "bold"))
+                self.button.config(bg="#e52e2e", text="Turn Off Watchdog")#, font=(self.parent.font, 24, "bold"))
                 self.state_label_text = "ON "
                 self.parent.run_script('watchdog_on')
             else:
-                self.button.config(bg="#394dcd", text="Turn On Watchdog", font=(self.parent.font, 20, "bold"))
+                self.button.config(bg="#394dcd", text="Turn On Watchdog")#, font=(self.parent.font, 24, "bold"))
                 self.state_label_text = "OFF"
                 self.parent.run_script('watchdog_off')
             self.load_text()
             print(self.on)
         except Exception as e:
-            self.parent.show_message(f"Error Toggling States: \n {e}")
+            self.parent.show_message("Error Toggling States: \n %s" % e)
 
     def load_text(self):
-        self.state_label.config(text="Watch Dog is {}".format(self.state_label_text))
+        self.state_label.config(text="Watch Dog is %s" % self.state_label_text)
 
 
 class LogMonitorFrame:
@@ -95,7 +96,7 @@ class LogMonitorFrame:
 
         # construct
         self.logmonitor_frame = tk.LabelFrame(parent, bg='light grey', bd=5, text="Monitor Log",
-                                              font=(parent.font, 12, "bold"), highlightbackground="#6c6c6c")
+                                              font=(parent.font, 16, "bold"), highlightbackground="#6c6c6c")
         # functions
         self.make_lm_check_button()
         self.make_lm_entry()
@@ -107,27 +108,29 @@ class LogMonitorFrame:
         # CHECK BUTTON:
         self.parent.log_state_var = tk.IntVar()
         self.check_button = tk.Checkbutton(self.logmonitor_frame, text="Log Errors", fg="#000080",
-                                           font=(self.parent.font, 12, "bold"),
+                                           font=(self.parent.font, 18, "bold"),
                                            selectcolor="#008080", relief=tk.RAISED, command=self.run_log_script,
-                                           variable=self.log_state_var, bd=3)
+                                           variable=self.log_state_var, bd=3, activebackground="#e35f5f")
         self.check_button.flash()
-        self.check_button.pack(padx=20, pady=20, side=tk.LEFT, expand=True)
+        self.check_button.pack(padx=10, pady=20, side=tk.LEFT, expand=True)
 
     def make_lm_entry(self):
         self.entry_var = tk.StringVar()
-        self.entry = tk.Entry(self.logmonitor_frame, textvariable=self.entry_var, bd=3)
-        self.entry.config(width=8)
-        self.entry.pack(padx=10, pady=10, side=tk.LEFT, expand=True)
+        self.entry = tk.Entry(self.logmonitor_frame, textvariable=self.entry_var, bd=3, font=(self.parent.font, 20))
+        self.entry.config(width=10)
+        self.entry.pack(padx=5, pady=10, side=tk.LEFT, expand=True)
 
     def make_lm_tl_checks(self):
         self.nn_state_var = tk.IntVar()
         self.ns_state_var = tk.IntVar()
         #
         self.tele_frame = tk.LabelFrame(self.logmonitor_frame, bg='light grey', borderwidth=0, highlightthickness=0)
-        self.check_nn = tk.Checkbutton(self.tele_frame, text="NN", fg="#000080", font=(self.parent.font, 12, "bold"),
-                                       selectcolor="#008080", relief=tk.RAISED, bd=3, variable=self.nn_state_var)
-        self.check_ns = tk.Checkbutton(self.tele_frame, text="NS", fg="#000080", font=(self.parent.font, 12, "bold"),
-                                       selectcolor="#008080", relief=tk.RAISED, bd=3, variable=self.ns_state_var)
+        self.check_nn = tk.Checkbutton(self.tele_frame, text="NN", fg="#000080", font=(self.parent.font, 18, "bold"),
+                                       selectcolor="#008080", relief=tk.RAISED, bd=3, variable=self.nn_state_var,
+                                       width=4, activebackground="#e35f5f")
+        self.check_ns = tk.Checkbutton(self.tele_frame, text="NS", fg="#000080", font=(self.parent.font, 18, "bold"),
+                                       selectcolor="#008080", relief=tk.RAISED, bd=3, variable=self.ns_state_var,
+                                       width=4, activebackground="#e35f5f")
         self.check_nn.pack(padx=10, pady=10, side=tk.TOP, expand=True)
         self.check_ns.pack(padx=10, pady=10, side=tk.TOP, expand=True)
         self.check_nn.flash()
@@ -145,10 +148,16 @@ class LogMonitorFrame:
                                                                                           or self.ns_state_var):
                 self.parent.show_message("Error: Which Antenna?")
             else:
-                parameter = self.entry_var.get()
-                # run_script('./script.sh parameter')
+                exp = self.entry_var.get()
+                if self.nn_state_var == 1:
+                    tl = 'nn'
+                elif self.ns_state_var == 1:
+                    tl = 'ns'
+               # elif self.nn_state_var == 1 and self.ns_state_var == 1:
+                    # run twice, once for each tl
+                self.parent.run_script('./script.sh exp tl')
         except Exception as e:
-            self.parent.show_message(f"Error Running Log Script: \n {e}")
+            self.parent.show_message("Error Running Log Script: \n %s" %e)
 
     def reset_entry_bg(self):
         # Reset background color to white
@@ -172,9 +181,9 @@ class Window(tk.Tk):
 
         try:
             self.watchdog_frame = WatchDogFrame(self)
-          # self.logmonitor_frame = LogMonitorFrame(self)
+           # self.logmonitor_frame = LogMonitorFrame(self)
         except Exception as e:
-            self.show_message(f"Error Starting GUI: \n {e}")
+            self.show_message("Error Starting GUI: \n %s" % e)
             self.destroy()
 
     def show_message(self, message):
@@ -184,7 +193,7 @@ class Window(tk.Tk):
         try:
             subprocess.run([script])
         except Exception as e:
-            self.show_message(f"Error Running Script: \n {e}")
+            self.show_message("Error Running Script: \n %s" % e)
 
     def check_fonts(self):
         if self.font not in font.families():
