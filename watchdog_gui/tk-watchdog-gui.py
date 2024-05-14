@@ -181,7 +181,7 @@ class Window(tk.Tk):
 
         try:
             self.watchdog_frame = WatchDogFrame(self)
-           # self.logmonitor_frame = LogMonitorFrame(self)
+            self.logmonitor_frame = LogMonitorFrame(self)
         except Exception as e:
             self.show_message("Error Starting GUI: \n %s" % e)
             self.destroy()
