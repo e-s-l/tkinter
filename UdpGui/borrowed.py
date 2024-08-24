@@ -1,3 +1,5 @@
+# borrowed from https://github.com/beenje/tkinter-logging-text-widget
+
 import datetime
 import queue
 import time
